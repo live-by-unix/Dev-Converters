@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<title>Dev Converters of Data</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root {
+  --bg: #050816;
+  --bg2: #0b1020;
+  --panel: #111827;
+  --text: #e5e7eb;
+  --muted: #9ca3af;
+  --border: #1f2937;
+  --accent: #4f46e5;
+  --accent2: #22c55e;
+  --error: #ef4444;
+}
+:root[data-theme="light"] {
+  --bg: #f8fafc;
+  --bg2: #ffffff;
+  --panel: #f1f5f9;
+  --text: #0f172a;
+  --muted: #475569;
+  --border: #cbd5e1;
+  --accent: #4f46e5;
+  --accent2: #16a34a;
+  --error: #dc2626;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:system-ui,-apple-system,Segoe UI,Roboto;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+header{
+  text-align:center;
+  padding:2rem 1rem 1rem;
+}
+header h1{
+  font-size:2rem;
+  margin-bottom:.3rem;
+}
+header p{
+  color:var(--muted);
+  font-size:.9rem;
+}
+.theme-toggle{
+  position:absolute;
+  top:1rem;
+  right:1rem;
+  background:var(--panel);
+  border:1px solid var(--border);
+  padding:.4rem .7rem;
+  border-radius:999px;
+  cursor:pointer;
+  font-size:.8rem;
+}
+.tabs{
+  display:flex;
+  justify-content:center;
+  gap:.5rem;
+  padding:1rem;
+  flex-wrap:wrap;
+}
+.tab-btn{
+  padding:.5rem 1rem;
+  border-radius:999px;
+  border:1px solid var(--border);
+  background:var(--panel);
+  color:var(--muted);
+  cursor:pointer;
+  font-size:.85rem;
+  transition:.15s;
+}
+.tab-btn.active{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;
+  border-color:transparent;
+}
+main{
+  flex:1;
+  max-width:1100px;
+  width:100%;
+  margin:0 auto;
+  padding:1rem;
+}
+.panel{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:1rem;
+  padding:1rem;
+  margin-bottom:1rem;
+}
+.hidden{display:none}
+.grid{
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  gap:1rem;
+}
+@media(max-width:900px){
+  .grid{grid-template-columns:1fr}
+}
+textarea{
+  width:100%;
+  min-height:240px;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:.7rem;
+  padding:.7rem;
+  color:var(--text);
+  font-family:JetBrains Mono,monospace;
+  font-size:.85rem;
+  resize:vertical;
+}
+.btn{
+  padding:.5rem 1rem;
+  border-radius:999px;
+  border:1px solid var(--border);
+  background:var(--panel);
+  color:var(--text);
+  cursor:pointer;
+  font-size:.85rem;
+  transition:.15s;
+}
+.btn.primary{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border-color:transparent;
+  color:#fff;
+}
+.btn:hover{opacity:.85}
+.error{
+  color:var(--error);
+  font-size:.8rem;
+  text-align:center;
+  min-height:1rem;
+}
+.copy{
+  position:absolute;
+  top:.6rem;
+  right:.6rem;
+  font-size:.75rem;
+  padding:.25rem .6rem;
+  border-radius:999px;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  cursor:pointer;
+}
+.copy-toast{
+  position:fixed;
+  bottom:1.2rem;
+  right:1.2rem;
+  background:var(--panel);
+  border:1px solid var(--border);
+  padding:.6rem 1rem;
+  border-radius:.7rem;
+  opacity:0;
+  transform:translateY(10px);
+  transition:.2s;
+}
+.copy-toast.show{
+  opacity:1;
+  transform:translateY(0);
+}
+footer{
+  text-align:center;
+  padding:1rem;
+  color:var(--muted);
+  font-size:.8rem;
+}
+</style>
+</head>
+<body>
+
+<button class="theme-toggle" id="themeToggle">🌙 Dark</button>
+
+<header>
+  <h1>AB Dev Converters</h1>
+  <p>JSON ↔ YAML • CSV ↔ JSON • Markdown ↔ HTML</p>
+</header>
+
+<div class="tabs">
+  <button class="tab-btn active" data-tab="jsonyaml">JSON ↔ YAML</button>
+  <button class="tab-btn" data-tab="csvjson">CSV ↔ JSON</button>
+  <button class="tab-btn" data-tab="mdhtml">Markdown ↔ HTML</button>
+</div>
+
+<main>
+
+<section id="jsonyaml" class="panel">
+  <div class="grid">
+    <div style="position:relative">
+      <textarea id="jsonInput">{ "hello": "world", "items": [1,2,3] }</textarea>
+      <button class="copy" data-copy="jsonInput">Copy</button>
+    </div>
+    <div style="display:flex;flex-direction:column;justify-content:center;gap:.7rem">
+      <button class="btn primary" id="jsonToYaml">JSON → YAML</button>
+      <button class="btn" id="yamlToJson">YAML → JSON</button>
+      <div class="error" id="jsonYamlError"></div>
+    </div>
+    <div style="position:relative">
+      <textarea id="yamlOutput">hello: world
+items:
+  - 1
+  - 2
+  - 3</textarea>
+      <button class="copy" data-copy="yamlOutput">Copy</button>
+    </div>
+  </div>
+</section>
+
+<section id="csvjson" class="panel hidden">
+  <div class="grid">
+    <div style="position:relative">
+      <textarea id="csvInput">name,age
+Alice,30
+Bob,25</textarea>
+      <button class="copy" data-copy="csvInput">Copy</button>
+    </div>
+    <div style="display:flex;flex-direction:column;justify-content:center;gap:.7rem">
+      <button class="btn primary" id="csvToJson">CSV → JSON</button>
+      <button class="btn" id="jsonToCsv">JSON → CSV</button>
+      <div class="error" id="csvJsonError"></div>
+    </div>
+    <div style="position:relative">
+      <textarea id="csvJsonOutput">[
+  { "name": "Alice", "age": 30 },
+  { "name": "Bob", "age": 25 }
+]</textarea>
+      <button class="copy" data-copy="csvJsonOutput">Copy</button>
+    </div>
+  </div>
+</section>
+
+<section id="mdhtml" class="panel hidden">
+  <div class="grid">
+    <div style="position:relative">
+      <textarea id="mdInput"># Hello
+
+This is **Markdown**.</textarea>
+      <button class="copy" data-copy="mdInput">Copy</button>
+    </div>
+    <div style="display:flex;flex-direction:column;justify-content:center;gap:.7rem">
+      <button class="btn primary" id="mdToHtml">Markdown → HTML</button>
+      <button class="btn" id="htmlToMd">HTML → Markdown</button>
+      <div class="error" id="mdHtmlError"></div>
+    </div>
+    <div style="position:relative">
+      <textarea id="htmlOutput">&lt;h1&gt;Hello&lt;/h1&gt;</textarea>
+      <button class="copy" data-copy="htmlOutput">Copy</button>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>All conversions run locally. No data leaves your browser.</footer>
+
+<div class="copy-toast" id="toast">Copied</div>
+
+<script>
+function $(id){return document.getElementById(id)}
+document.querySelectorAll(".tab-btn").forEach(b=>{
+  b.onclick=()=>{
+    document.querySelectorAll(".tab-btn").forEach(x=>x.classList.remove("active"))
+    b.classList.add("active")
+    document.querySelectorAll("section.panel").forEach(x=>x.classList.add("hidden"))
+    $(b.dataset.tab).classList.remove("hidden")
+  }
+})
+$("themeToggle").onclick=()=>{
+  const html=document.documentElement
+  const dark=html.getAttribute("data-theme")==="dark"
+  html.setAttribute("data-theme",dark?"light":"dark")
+  $("themeToggle").textContent=dark?"☀️ Light":"🌙 Dark"
+}
+function toast(msg){
+  const t=$("toast")
+  t.textContent=msg
+  t.classList.add("show")
+  setTimeout(()=>t.classList.remove("show"),1200)
+}
+document.querySelectorAll(".copy").forEach(btn=>{
+  btn.onclick=()=>{
+    const id=btn.dataset.copy
+    navigator.clipboard.writeText($(id).value)
+    toast("Copied")
+  }
+})
+function parseCSV(t){
+  const lines=t.trim().split(/\r?\n/)
+  const headers=lines[0].split(",")
+  return lines.slice(1).map(l=>{
+    const cols=l.split(",")
+    const o={}
+    headers.forEach((h,i)=>o[h]=cols[i]||"")
+    return o
+  })
+}
+function toCSV(arr){
+  const h=Object.keys(arr[0])
+  return [h.join(",")].concat(arr.map(r=>h.map(k=>r[k]).join(","))).join("\n")
+}
+$("jsonToYaml").onclick=()=>{
+  $("jsonYamlError").textContent=""
+  try{
+    const o=JSON.parse($("jsonInput").value)
+    $("yamlOutput").value=jsyaml.dump(o,{indent:2,lineWidth:-1})
+  }catch(e){$("jsonYamlError").textContent=e.message}
+}
+$("yamlToJson").onclick=()=>{
+  $("jsonYamlError").textContent=""
+  try{
+    const o=jsyaml.load($("yamlOutput").value)
+    $("jsonInput").value=JSON.stringify(o,null,2)
+  }catch(e){$("jsonYamlError").textContent=e.message}
+}
+$("csvToJson").onclick=()=>{
+  $("csvJsonError").textContent=""
+  try{
+    $("csvJsonOutput").value=JSON.stringify(parseCSV($("csvInput").value),null,2)
+  }catch(e){$("csvJsonError").textContent=e.message}
+}
+$("jsonToCsv").onclick=()=>{
+  $("csvJsonError").textContent=""
+  try{
+    const arr=JSON.parse($("csvJsonOutput").value)
+    $("csvInput").value=toCSV(arr)
+  }catch(e){$("csvJsonError").textContent=e.message}
+}
+function mdToHtmlSimple(md){
+  return md
+    .replace(/^### (.*$)/gim,"<h3>$1</h3>")
+    .replace(/^## (.*$)/gim,"<h2>$1</h2>")
+    .replace(/^# (.*$)/gim,"<h1>$1</h1>")
+    .replace(/\*\*(.*)\*\*/gim,"<strong>$1</strong>")
+    .replace(/\*(.*)\*/gim,"<em>$1</em>")
+    .replace(/\n$/gim,"<br>")
+}
+$("mdToHtml").onclick=()=>{
+  $("mdHtmlError").textContent=""
+  try{$("htmlOutput").value=mdToHtmlSimple($("mdInput").value)}
+  catch(e){$("mdHtmlError").textContent=e.message}
+}
+$("htmlToMd").onclick=()=>{
+  $("mdHtmlError").textContent=""
+  try{
+    let html=$("htmlOutput").value
+    html=html.replace(/<h1>(.*?)<\/h1>/g,"# $1\n")
+    html=html.replace(/<h2>(.*?)<\/h2>/g,"## $1\n")
+    html=html.replace(/<h3>(.*?)<\/h3>/g,"### $1\n")
+    html=html.replace(/<strong>(.*?)<\/strong>/g,"**$1**")
+    html=html.replace(/<em>(.*?)<\/em>/g,"*$1*")
+    html=html.replace(/<br>/g,"\n")
+    $("mdInput").value=html.trim()
+  }catch(e){$("mdHtmlError").textContent=e.message}
+}
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+
+</body>
+</html>
