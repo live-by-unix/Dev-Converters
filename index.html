@@ -2,7 +2,7 @@
 <html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
-<title>Dev Converts of Data</title>
+<title>Dev converts for data</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 :root {
@@ -17,6 +17,8 @@
   --accent2: #22c55e;
   --error: #f97373;
   --shadow: 0 18px 40px rgba(0,0,0,.6);
+  --sheet-bg: rgba(15,23,42,0.82);
+  --sheet-border: rgba(148,163,184,0.45);
 }
 :root[data-theme="light"] {
   --bg: #f8fafc;
@@ -30,6 +32,8 @@
   --accent2: #16a34a;
   --error: #dc2626;
   --shadow: 0 12px 30px rgba(15,23,42,.18);
+  --sheet-bg: rgba(255,255,255,0.9);
+  --sheet-border: rgba(148,163,184,0.7);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{
@@ -44,26 +48,26 @@ body{
   max-width:1120px;
   width:100%;
   margin:0 auto;
-  padding:1.5rem 1.25rem 2rem;
+  padding:2rem 1.5rem 2.5rem;
 }
 .app-header{
   display:flex;
   justify-content:space-between;
   align-items:flex-start;
-  gap:1rem;
-  margin-bottom:1.25rem;
+  gap:1.5rem;
+  margin-bottom:1.75rem;
 }
 .app-title{
   display:flex;
   flex-direction:column;
-  gap:.25rem;
+  gap:.35rem;
 }
 .app-title h1{
-  font-size:1.6rem;
+  font-size:1.8rem;
   letter-spacing:.04em;
 }
 .app-title p{
-  font-size:.9rem;
+  font-size:.95rem;
   color:var(--muted);
 }
 .theme-toggle{
@@ -71,7 +75,7 @@ body{
   border:1px solid var(--border);
   background:var(--panel);
   color:var(--text);
-  padding:.4rem .8rem;
+  padding:.45rem .9rem;
   font-size:.8rem;
   cursor:pointer;
   display:inline-flex;
@@ -84,9 +88,9 @@ body{
 .upload-bar{
   display:flex;
   flex-wrap:wrap;
-  gap:.75rem;
+  gap:.9rem;
   align-items:center;
-  margin-bottom:1.25rem;
+  margin-bottom:1.75rem;
 }
 .upload-label{
   font-size:.8rem;
@@ -99,7 +103,7 @@ body{
   border:none;
   background:linear-gradient(135deg,var(--accent),var(--accent2));
   color:#fff;
-  padding:.55rem 1.1rem;
+  padding:.6rem 1.2rem;
   font-size:.85rem;
   cursor:pointer;
   display:inline-flex;
@@ -116,15 +120,15 @@ body{
 .tabs{
   display:flex;
   flex-wrap:wrap;
-  gap:.5rem;
-  margin-bottom:1rem;
+  gap:.6rem;
+  margin-bottom:1.25rem;
 }
 .tab-btn{
   border-radius:999px;
   border:1px solid var(--border);
   background:var(--panel-soft);
   color:var(--muted);
-  padding:.45rem .9rem;
+  padding:.5rem 1rem;
   font-size:.8rem;
   cursor:pointer;
   display:inline-flex;
@@ -142,17 +146,17 @@ body{
 }
 .panel{
   background:var(--panel);
-  border-radius:1.1rem;
+  border-radius:1.2rem;
   border:1px solid var(--border);
   box-shadow:var(--shadow);
-  padding:1rem;
-  margin-bottom:1rem;
+  padding:1.25rem 1.1rem 1.4rem;
+  margin-bottom:1.4rem;
 }
 .hidden{display:none}
 .grid{
   display:grid;
   grid-template-columns:minmax(0,1.1fr) auto minmax(0,1.1fr);
-  gap:1rem;
+  gap:1.2rem;
   align-items:stretch;
 }
 @media(max-width:900px){
@@ -162,7 +166,7 @@ body{
   position:relative;
   display:flex;
   flex-direction:column;
-  gap:.4rem;
+  gap:.5rem;
 }
 .text-label-row{
   display:flex;
@@ -178,21 +182,22 @@ body{
 .badge{
   border-radius:999px;
   border:1px solid var(--border);
-  padding:.15rem .5rem;
-  font-size:.7rem;
+  padding:.18rem .6rem;
+  font-size:.72rem;
   color:var(--muted);
+  align-self:flex-start;
 }
 textarea{
   width:100%;
-  min-height:230px;
-  border-radius:.75rem;
+  min-height:240px;
+  border-radius:.8rem;
   border:1px solid var(--border);
   background:var(--bg-soft);
   color:var(--text);
-  padding:.7rem .8rem;
+  padding:.8rem .9rem;
   font-family:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
   font-size:.8rem;
-  line-height:1.4;
+  line-height:1.45;
   resize:vertical;
   outline:none;
 }
@@ -226,7 +231,7 @@ textarea:focus{
   flex-direction:column;
   justify-content:center;
   align-items:center;
-  gap:.6rem;
+  gap:.7rem;
 }
 .error{
   min-height:1rem;
@@ -248,6 +253,7 @@ textarea:focus{
   transform:translateY(8px);
   pointer-events:none;
   transition:.18s;
+  z-index:40;
 }
 .toast.show{
   opacity:1;
@@ -255,9 +261,104 @@ textarea:focus{
 }
 footer{
   text-align:center;
-  padding:0 1.25rem 1.25rem;
+  padding:0 1.25rem 1.5rem;
   font-size:.75rem;
   color:var(--muted);
+}
+.sheet-backdrop{
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,0.45);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .18s ease-out;
+  z-index:60;
+}
+.sheet-backdrop.show{
+  opacity:1;
+  pointer-events:auto;
+}
+.sheet{
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:-260px;
+  max-width:520px;
+  margin:0 auto;
+  background:var(--sheet-bg);
+  border-radius:1.1rem 1.1rem 0 0;
+  border:1px solid var(--sheet-border);
+  border-bottom:none;
+  box-shadow:0 -18px 40px rgba(0,0,0,.55);
+  padding:1rem 1.1rem 1.1rem;
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  transition:transform .22s ease-out;
+  transform:translateY(260px);
+  z-index:70;
+}
+.sheet.show{
+  transform:translateY(0);
+}
+.sheet-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:.6rem;
+}
+.sheet-title{
+  font-size:.9rem;
+  font-weight:600;
+}
+.sheet-sub{
+  font-size:.75rem;
+  color:var(--muted);
+}
+.sheet-body{
+  display:flex;
+  flex-direction:column;
+  gap:.6rem;
+  margin-top:.3rem;
+}
+.sheet-body label{
+  font-size:.78rem;
+  color:var(--muted);
+}
+.sheet-body input{
+  width:100%;
+  border-radius:.6rem;
+  border:1px solid var(--border);
+  padding:.45rem .6rem;
+  font-size:.85rem;
+  background:var(--panel-soft);
+  color:var(--text);
+  outline:none;
+}
+.sheet-body input:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 1px rgba(79,70,229,.6);
+}
+.sheet-footer{
+  display:flex;
+  justify-content:flex-end;
+  gap:.5rem;
+  margin-top:.7rem;
+}
+.sheet-footer .btn{
+  padding:.35rem .9rem;
+  font-size:.8rem;
+}
+.sheet-footer .btn.primary{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border-color:transparent;
+  color:#fff;
+}
+.sheet-drag{
+  width:40px;
+  height:4px;
+  border-radius:999px;
+  background:rgba(148,163,184,0.7);
+  margin:0 auto .6rem;
 }
 </style>
 </head>
@@ -265,7 +366,7 @@ footer{
 <div class="app-shell">
   <div class="app-header">
     <div class="app-title">
-      <h1>Dev Converters of Data</h1>
+      <h1>Dev Converters of data</h1>
       <p>JSON ↔ YAML · CSV ↔ JSON · Markdown ↔ HTML — all local, no uploads to a server.</p>
     </div>
     <button class="theme-toggle" id="themeToggle"><span class="icon">🌙</span><span id="themeLabel">Dark</span></button>
@@ -292,6 +393,7 @@ footer{
           <span>JSON</span>
           <div class="text-actions">
             <button class="btn small" data-copy="jsonInput">Copy</button>
+            <button class="btn small" data-download="jsonInput" data-ext="json">Download</button>
             <button class="btn small" id="formatJson">Format</button>
           </div>
         </div>
@@ -308,6 +410,7 @@ footer{
           <span>YAML</span>
           <div class="text-actions">
             <button class="btn small" data-copy="yamlOutput">Copy</button>
+            <button class="btn small" data-download="yamlOutput" data-ext="yaml">Download</button>
           </div>
         </div>
         <textarea id="yamlOutput" spellcheck="false">hello: world
@@ -326,6 +429,7 @@ items:
           <span>CSV</span>
           <div class="text-actions">
             <button class="btn small" data-copy="csvInput">Copy</button>
+            <button class="btn small" data-download="csvInput" data-ext="csv">Download</button>
           </div>
         </div>
         <textarea id="csvInput" spellcheck="false">name,age,city
@@ -343,6 +447,7 @@ Bob,25,Berlin</textarea>
           <span>JSON</span>
           <div class="text-actions">
             <button class="btn small" data-copy="csvJsonOutput">Copy</button>
+            <button class="btn small" data-download="csvJsonOutput" data-ext="json">Download</button>
           </div>
         </div>
         <textarea id="csvJsonOutput" spellcheck="false">[
@@ -360,6 +465,7 @@ Bob,25,Berlin</textarea>
           <span>Markdown</span>
           <div class="text-actions">
             <button class="btn small" data-copy="mdInput">Copy</button>
+            <button class="btn small" data-download="mdInput" data-ext="md">Download</button>
           </div>
         </div>
         <textarea id="mdInput" spellcheck="false"># Hello
@@ -377,6 +483,7 @@ This is **Markdown**.</textarea>
           <span>HTML</span>
           <div class="text-actions">
             <button class="btn small" data-copy="htmlOutput">Copy</button>
+            <button class="btn small" data-download="htmlOutput" data-ext="html">Download</button>
           </div>
         </div>
         <textarea id="htmlOutput" spellcheck="false">&lt;h1&gt;Hello&lt;/h1&gt;
@@ -389,6 +496,26 @@ This is **Markdown**.</textarea>
 </div>
 
 <footer>All conversions run in your browser. No tracking, no network requests.</footer>
+
+<div class="sheet-backdrop" id="sheetBackdrop">
+  <div class="sheet" id="sheet">
+    <div class="sheet-drag"></div>
+    <div class="sheet-header">
+      <div>
+        <div class="sheet-title">Download file</div>
+        <div class="sheet-sub">You can keep the suggested name or change it.</div>
+      </div>
+    </div>
+    <div class="sheet-body">
+      <label for="sheetFilename">Filename</label>
+      <input id="sheetFilename" type="text" autocomplete="off">
+    </div>
+    <div class="sheet-footer">
+      <button class="btn" id="sheetCancel">Cancel</button>
+      <button class="btn primary" id="sheetSave">Save</button>
+    </div>
+  </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
 <script>
@@ -645,6 +772,84 @@ $("fileInput").addEventListener("change",function(e){
     $("fileInput").value="";
   };
   reader.readAsText(file);
+});
+var currentDownloadTarget=null;
+var currentDownloadExt="txt";
+function suggestName(ext){
+  var now=new Date();
+  var y=now.getFullYear();
+  var m=String(now.getMonth()+1).padStart(2,"0");
+  var d=String(now.getDate()).padStart(2,"0");
+  var hh=String(now.getHours()).padStart(2,"0");
+  var mm=String(now.getMinutes()).padStart(2,"0");
+  var ss=String(now.getSeconds()).padStart(2,"0");
+  return "converted-"+y+m+d+"-"+hh+mm+ss+"."+ext;
+}
+function openSheet(targetId,ext){
+  currentDownloadTarget=targetId;
+  currentDownloadExt=ext||"txt";
+  $("sheetFilename").value=suggestName(currentDownloadExt);
+  $("sheetBackdrop").classList.add("show");
+  $("sheet").classList.add("show");
+  setTimeout(function(){$("sheetFilename").focus();$("sheetFilename").select();},50);
+}
+function closeSheet(){
+  $("sheetBackdrop").classList.remove("show");
+  $("sheet").classList.remove("show");
+  currentDownloadTarget=null;
+}
+function extFromName(name,ext){
+  if(!name)return"";
+  if(name.indexOf(".")===-1)return name+"."+ext;
+  return name;
+}
+function mimeForExt(ext){
+  if(ext==="json")return"application/json";
+  if(ext==="yaml"||ext==="yml")return"text/yaml";
+  if(ext==="csv")return"text/csv";
+  if(ext==="md"||ext==="markdown")return"text/markdown";
+  if(ext==="html"||ext==="htm")return"text/html";
+  return"text/plain";
+}
+document.querySelectorAll("[data-download]").forEach(function(btn){
+  btn.addEventListener("click",function(){
+    var target=btn.getAttribute("data-download");
+    var ext=btn.getAttribute("data-ext")||"txt";
+    if(!$(target))return;
+    openSheet(target,ext);
+  });
+});
+$("sheetBackdrop").addEventListener("click",function(e){
+  if(e.target===this)closeSheet();
+});
+$("sheetCancel").addEventListener("click",function(){
+  closeSheet();
+});
+$("sheetSave").addEventListener("click",function(){
+  if(!currentDownloadTarget)return;
+  var el=$(currentDownloadTarget);
+  if(!el)return;
+  var text=el.value||"";
+  var ext=currentDownloadExt||"txt";
+  var name=extFromName($("sheetFilename").value.trim()||suggestName(ext),ext);
+  var blob=new Blob([text],{type:mimeForExt(ext)});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement("a");
+  a.href=url;
+  a.download=name;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast("Download started");
+  closeSheet();
+});
+document.addEventListener("keydown",function(e){
+  if(e.key==="Escape"){
+    if($("sheetBackdrop").classList.contains("show")){
+      closeSheet();
+    }
+  }
 });
 </script>
 </body>
